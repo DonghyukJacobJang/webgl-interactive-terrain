@@ -1,13 +1,17 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const production = process.env.NODE_ENV === 'production';
+const PRODUCTION = process.env.NODE_ENV === 'production';
+const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 const plugins = [
   new webpack.DefinePlugin({
     'process.env': {
-      DEV: !production
+      DEV: !PRODUCTION
     }
+  }),
+  new webpack.DefinePlugin({
+    'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH)
   })
 ];
 
@@ -20,6 +24,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'build'),
+    publicPath: ASSET_PATH,
     filename: 'app.bundle.js'
   },
   module: {
@@ -43,6 +48,12 @@ module.exports = {
       {
         test: /\.(glsl|frag|vert)$/,
         loader: 'glslify', exclude: /node_modules/
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader'
+        ]
       }
     ]
   },

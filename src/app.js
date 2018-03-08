@@ -1,10 +1,10 @@
-import { AxesHelper, GridHelper} from 'three';
+import { AxesHelper, GridHelper, Raycaster } from 'three';
 
 import scene from './webgl/scene';
 import renderer from './webgl/renderer';
 import { camera } from './webgl/cameras';
 
-import Box from './objects/Box/Box';
+import Terrain from './objects/Terrain/Terrain';
 
 import OrbitControls from './lib/three/OrbitControls';
 import RenderStats from './lib/three/render-stats';
@@ -17,6 +17,10 @@ import './app.scss';
 class App {
 
   constructor() {
+    this.mouse = {
+      x: 0,
+      y: 0
+    };
     document.body.appendChild(renderer.domElement);
 
     // Listeners
@@ -27,8 +31,10 @@ class App {
     this.setStats();
     this.setOrbitControls();
 
-    this.box = new Box();
-    scene.add(this.box.mesh);
+    this.raycaster = new Raycaster();
+
+    this.terrain = new Terrain();
+    scene.add(this.terrain.mesh);
 
     this.update();
   }
@@ -41,6 +47,31 @@ class App {
 
   onMouseMove = (ev) => {
     ev.preventDefault();
+    this.mouse.x = (ev.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = - (ev.clientY / window.innerHeight) * 2 + 1;
+
+    this.raycaster.setFromCamera(this.mouse, camera);
+    const intersects = this.raycaster.intersectObject(this.terrain.mesh);
+
+    if (intersects.length > 0) {
+      const target = intersects[0];
+
+      if (this.targetFace !== target.face) {
+
+        this.targetFace = target.face;
+
+        if (
+          this.targetFace.a === target.face.a ||
+          this.targetFace.b === target.face.b ||
+          this.targetFace.c === target.face.c
+        ) {
+          this.terrain.updateDisplacement(this.targetFace);
+        }
+      }
+    } else {
+      this.terrain.updateDisplacement(false);
+    }
+
   };
 
   setOrbitControls = () => {
@@ -88,7 +119,7 @@ class App {
 
     this.controls.main.update();
 
-    this.box.update();
+    this.terrain.update(this.mouse);
 
     this.render(camera, 0, 0, 1, 1);
 
