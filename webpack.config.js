@@ -1,18 +1,34 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const PRODUCTION = process.env.NODE_ENV === 'production';
-const ASSET_PATH = process.env.ASSET_PATH || '/';
+
+const extractCSS = new ExtractTextPlugin('[name].bundle.css');
 
 const plugins = [
+  new HtmlWebpackPlugin({
+    title: 'WebGL Prototype',
+    template: './index.html',
+    filename: './index.html',
+    showErrors: true
+  }),
   new webpack.DefinePlugin({
     'process.env': {
       DEV: !PRODUCTION
     }
   }),
-  new webpack.DefinePlugin({
-    'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH)
-  })
+  new webpack.optimize.CommonsChunkPlugin({
+    name: 'commons',
+    filename: 'commons.js'
+  }),
+  new CopyWebpackPlugin([
+    { from: 'src/assets', to: 'assets' }
+  ]),
+  new webpack.NamedModulesPlugin(),
+  extractCSS
 ];
 
 module.exports = {
@@ -23,8 +39,7 @@ module.exports = {
     ]
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
-    publicPath: ASSET_PATH,
+    path: path.resolve(__dirname, 'public'),
     filename: 'app.bundle.js'
   },
   module: {
@@ -39,7 +54,7 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        loader: 'style-loader!css-loader!sass-loader'
+        loader: extractCSS.extract(['css-loader', 'sass-loader'])
       },
       {
         test: /\.(glsl|frag|vert)$/,

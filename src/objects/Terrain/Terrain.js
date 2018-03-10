@@ -2,7 +2,7 @@ import {
   BufferAttribute, FaceColors, Mesh, PlaneBufferGeometry, RepeatWrapping, ShaderMaterial, TextureLoader, Vector2
 } from 'three';
 
-import terrainImage from  '../../assets/images/mask_with_height.png';
+import { IMAGE_PATH } from '../../util/constants';
 
 const fragShader = require('./shader.frag');
 const vertShader = require('./shader.vert');
@@ -11,7 +11,7 @@ export default class Terrain {
 
   constructor() {
     const loader = new TextureLoader();
-    const bumpTexture = loader.load(terrainImage);
+    const bumpTexture = loader.load(`${IMAGE_PATH}mask_with_height.png`);
     bumpTexture.wrapT = RepeatWrapping;
     bumpTexture.wrapS = bumpTexture.wrapT;
 
