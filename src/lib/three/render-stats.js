@@ -18,7 +18,7 @@ THREEx.RendererStats = function() {
   var msMax = 0;
 
   var container = document.createElement('div');
-  container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer';
+  container.style.cssText = 'width:80px;opacity:0.9;cursor:pointer;';
 
   var msDiv = document.createElement('div');
   msDiv.style.cssText =

@@ -1,10 +1,10 @@
 import { WebGLRenderer } from 'three';
 
 const renderer = new WebGLRenderer({
-  // antialias: true
+  antialias: true
 });
 
-renderer.setPixelRatio(window.devicePixelRatio || 1);
+renderer.setPixelRatio(Math.min(1.5, window.devicePixelRatio));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setScissorTest(true);
 
