@@ -20,7 +20,7 @@ export default class Terrain {
     bumpTexture.wrapT = RepeatWrapping;
     bumpTexture.wrapS = bumpTexture.wrapT;
 
-    const geometry = new PlaneBufferGeometry(10, 10, 32, 32);
+    const geometry = new PlaneBufferGeometry(20, 20, 64, 64);
     geometry.rotateX(- Math.PI / 2);
 
     this.attributes = {
@@ -51,8 +51,6 @@ export default class Terrain {
     });
 
     this.mesh = new Mesh(geometry, this.sMaterial);
-
-    this.frame = 0;
   }
 
   update(mouse) {
